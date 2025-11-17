@@ -1,12 +1,66 @@
-// OCP Principle Implementation
-// Base Strategy Interface (Open for extension, closed for modification)
+/* ============================================
+   ❌ MAUVAISE PRATIQUE - Violation du Principe OCP
+   ============================================
+   
+   Cette approche nécessite la MODIFICATION du code existant
+   pour ajouter de nouveaux types de remise. Cela viole le Principe Ouvert/Fermé.
+   
+   Problèmes:
+   - Doit modifier la fonction applyDiscount à chaque ajout d'une nouvelle remise
+   - Risque de casser les fonctionnalités existantes
+   - Plus difficile de tester les types de remise individuellement
+   - Violation du Principe de Responsabilité Unique
+   - Pas évolutif
+
+class Order {
+    constructor() {
+        this.items = [];
+        this.total = 0;
+    }
+    addItem(name, price) {
+        this.items.push({ name, price });
+        this.total += price;
+    }
+}
+
+// ❌ MAUVAIS: Fonction monolithique qui nécessite une modification pour chaque nouvelle remise
+function applyDiscount(order, discountType) {
+    // Pour ajouter une nouvelle remise, nous DEVONS modifier cette fonction
+    if (discountType === 'blackfriday') {
+        return order.total * 0.5;
+    } else if (discountType === 'member') {
+        return order.total * 0.1;
+    } else if (discountType === 'student') {
+        return order.total * 0.2;
+    } else if (discountType === 'senior') {
+        return order.total * 0.15;
+    } else if (discountType === 'vip') {
+        // ❌ Ajouter ceci nécessite de modifier la fonction existante !
+        return order.total * 0.25;
+    }
+    return 0;
+}
+
+// Utilisation:
+// const order = new Order();
+// order.addItem("Laptop", 1000);
+// const discount = applyDiscount(order, 'blackfriday');
+// const total = order.total - discount;
+
+============================================ */
+
+// ============================================
+// ✅ BONNE PRATIQUE - Respecte le Principe OCP
+// ============================================
+// Implémentation du Principe OCP
+// Interface de Stratégie de Base (Ouvert pour l'extension, fermé pour la modification)
 class DiscountStrategy {
     apply(order) {
         throw new Error("apply() method must be implemented");
     }
 }
 
-// Concrete Strategy Implementations
+// Implémentations concrètes des Stratégies
 class NoDiscount extends DiscountStrategy {
     apply(order) {
         return 0;
@@ -15,29 +69,29 @@ class NoDiscount extends DiscountStrategy {
 
 class BlackFridayDiscount extends DiscountStrategy {
     apply(order) {
-        return order.total * 0.5; // 50% off
+        return order.total * 0.5; // 50% de remise
     }
 }
 
 class MemberDiscount extends DiscountStrategy {
     apply(order) {
-        return order.total * 0.1; // 10% off
+        return order.total * 0.1; // 10% de remise
     }
 }
 
 class StudentDiscount extends DiscountStrategy {
     apply(order) {
-        return order.total * 0.2; // 20% off
+        return order.total * 0.2; // 20% de remise
     }
 }
 
 class SeniorDiscount extends DiscountStrategy {
     apply(order) {
-        return order.total * 0.15; // 15% off
+        return order.total * 0.15; // 15% de remise
     }
 }
 
-// Order class
+// Classe Order
 class Order {
     constructor() {
         this.items = [];
@@ -54,12 +108,12 @@ class Order {
     }
 }
 
-// Checkout system using polymorphism (OCP principle in action)
+// Système de paiement utilisant le polymorphisme (principe OCP en action)
 function applyDiscount(order, strategy) {
     return strategy.apply(order);
 }
 
-// Sample products
+// Produits d'exemple
 const products = [
     { name: "Laptop", price: 999.99 },
     { name: "Mouse", price: 29.99 },
@@ -68,18 +122,18 @@ const products = [
     { name: "Webcam", price: 49.99 }
 ];
 
-// Initialize the application
+// Initialiser l'application
 let currentOrder = new Order();
 let currentStrategy = new NoDiscount();
 
-// DOM elements
+// Éléments DOM
 const productList = document.getElementById('productList');
 const discountSelect = document.getElementById('discountSelect');
 const subtotalElement = document.getElementById('subtotal');
 const discountElement = document.getElementById('discount');
 const totalElement = document.getElementById('total');
 
-// Strategy factory
+// Factory de stratégies
 function getDiscountStrategy(type) {
     switch(type) {
         case 'blackfriday':
@@ -95,7 +149,7 @@ function getDiscountStrategy(type) {
     }
 }
 
-// Render products
+// Afficher les produits
 function renderProducts() {
     productList.innerHTML = '';
     products.forEach(product => {
@@ -109,7 +163,7 @@ function renderProducts() {
     });
 }
 
-// Update order
+// Mettre à jour la commande
 function updateOrder() {
     currentOrder = new Order();
     products.forEach(product => {
@@ -118,7 +172,7 @@ function updateOrder() {
     updateSummary();
 }
 
-// Update summary display
+// Mettre à jour l'affichage du résumé
 function updateSummary() {
     const subtotal = currentOrder.total;
     const discountAmount = applyDiscount(currentOrder, currentStrategy);
@@ -129,13 +183,13 @@ function updateSummary() {
     totalElement.textContent = `$${total.toFixed(2)}`;
 }
 
-// Event listeners
+// Écouteurs d'événements
 discountSelect.addEventListener('change', (e) => {
     currentStrategy = getDiscountStrategy(e.target.value);
     updateSummary();
 });
 
-// Initialize
+// Initialisation
 renderProducts();
 updateOrder();
 
