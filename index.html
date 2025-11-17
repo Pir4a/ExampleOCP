@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCP Principle - Discount System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛒 Panier - Principe OCP demo</h1>
+            <p class="subtitle">Principe Ouvert/Fermé: Ouvert pour l'extension, fermé pour la modification</p>
+        </header>
+
+        <div class="content">
+            <section class="products">
+                <h2>Produits</h2>
+                <div class="product-list" id="productList">
+                    <!-- Products will be dynamically added -->
+                </div>
+            </section>
+
+            <section class="checkout">
+                <h2>Paiement</h2>
+                <div class="discount-section">
+                    <label for="discountSelect">Sélectionner un coupon de remise:</label>
+                    <select id="discountSelect">
+                        <option value="none">Aucune remise</option>
+                        <option value="blackfriday">Black Friday (50% de remise)</option>
+                        <option value="member">Remise pour membres (10% de remise)</option>
+                        <option value="student">Remise pour étudiants (20% de remise)</option>
+                        <option value="senior">Remise pour seniors (15% de remise)</option>
+                    </select>
+                </div>
+
+                <div class="summary">
+                    <div class="summary-row">
+                        <span>Sous-total:</span>
+                        <span id="subtotal">$0.00</span>
+                    </div>
+                    <div class="summary-row discount-row">
+                        <span>Remise:</span>
+                        <span id="discount">-$0.00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total à payer:</span>
+                        <span id="total">$0.00</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <h3>💡 Principe OCP expliqué sur cette page</h3>
+                    <p>Le Principe Ouvert/Fermé dit que les entités de logiciel doivent être <strong>ouvertes pour l'extension</strong> mais <strong>fermées pour la modification</strong>.</p>
+                    <p>Dans cet exemple:</p>
+                    <ul>
+                        <li>✅ Nous pouvons ajouter de nouvelles stratégies de remise (étendre) sans modifier le code existant</li>
+                        <li>✅ Le système de paiement utilise la polymorphisme pour appliquer n'importe quelle stratégie de remise</li>
+                        <li>✅ Chaque remise est implémentée indépendamment</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
+
